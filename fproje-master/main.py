@@ -1,0 +1,20 @@
+import dataprep as dp
+import matplotlib.pyplot as plt
+import torch
+import TrainDense121 as t
+import predict_test as p
+DIR = "/mnt/data/data/summer_2018/resized_target_files/"
+annots, images, users = dp.load_from_csv()
+labels, label_map = dp.all_labels(annots)
+sample = dp.create_sample(annots, images, label_map, DIR)
+dataloader = dp.load_transformed_data(label_map, DIR)
+
+device = torch.device('cuda')
+print("*************************************************************")
+labels, label_map = dp.selected_labels()
+#print(label_map)
+print(labels)
+dataloaders, dataset_sizes = dp.selected_dataset(labels, label_map,DIR,0.8,0.1,0.1)
+model = t.create_model()
+#model = t.model_training(model, device,dataloaders, dataset_sizes)
+p.predict_rotate_test2(dataloaders, dataset_sizes, model,device)
